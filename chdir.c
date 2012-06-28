@@ -72,9 +72,3 @@ int kosh_chdir(char *dir) {
 	return 0;
 }
 
-/* get the current directory */
-char *getcwd(char *buf, size_t size) {
-	strncpy(buf, cwd, size);
-	return buf;
-}
-
