@@ -9,7 +9,7 @@
 #include "kosh.h"
 
 /* the current directory */
-static char cwd[MAX_FN_LEN];
+static char cwd[NAME_MAX];
 
 /* read a pathname based on the current directory and turn it into an abs one, we
    don't check for validity, or really do anything except handle ..'s and .'s */
@@ -62,10 +62,10 @@ int makeabspath(char *buff, char *path, size_t size) {
 
 /* change the current directory (dir is an absolute path for now) */
 int kosh_chdir(char *dir) {
-	char buff[MAX_FN_LEN];
+	char buff[NAME_MAX];
 
-	makeabspath(buff, dir, MAX_FN_LEN);
-	strncpy(cwd, buff, MAX_FN_LEN);
+	makeabspath(buff, dir, NAME_MAX);
+	strncpy(cwd, buff, NAME_MAX);
 
 	fs_chdir(cwd);
 

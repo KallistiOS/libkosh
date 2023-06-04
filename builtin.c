@@ -58,7 +58,7 @@ static void builtin_exit(int argc, char *argv[]) {
 static void builtin_ls(int argc, char *argv[]) {
 	dirent_t *ent;
 	uint32 hnd;
-	char dir[MAX_FN_LEN];
+	char dir[NAME_MAX];
 	int lflag;
 
 	lflag = 0;
@@ -68,7 +68,7 @@ static void builtin_ls(int argc, char *argv[]) {
 			lflag = 1;
 	}
 
-	getcwd(dir, MAX_FN_LEN);
+	getcwd(dir, NAME_MAX);
 
 	conio_printf("Reading %s\n", dir);
 
@@ -100,9 +100,9 @@ static void builtin_cd(int argc, char *argv[]) {
 
 /* print the current directory */
 static void builtin_pwd(int argc, char *argv[]) {
-	char buff[MAX_FN_LEN];
+	char buff[NAME_MAX];
 
-	conio_printf("%s\n", getcwd(buff, MAX_FN_LEN));
+	conio_printf("%s\n", getcwd(buff, NAME_MAX));
 }
 
 /* clear the screen */
@@ -124,7 +124,7 @@ static void builtin_echo(int argc, char *argv[]) {
 static void builtin_cat(int argc, char *argv[]) {
 	uint32 hnd;
 	char buff[256];
-	char fn[MAX_FN_LEN];
+	char fn[NAME_MAX];
 	int cnt;
 
 	if (argc != 2) {
@@ -133,7 +133,7 @@ static void builtin_cat(int argc, char *argv[]) {
 	}
 
 	/* the the abs path */
-	makeabspath(fn, argv[1], MAX_FN_LEN);
+	makeabspath(fn, argv[1], NAME_MAX);
 
 	hnd = fs_open(fn, O_RDONLY);
 	if (!hnd) {
@@ -161,7 +161,7 @@ static void builtin_cat(int argc, char *argv[]) {
 
 /* dump files as hex */
 static void builtin_hd(int argc, char *argv[]) {
-	char fn[MAX_FN_LEN];
+	char fn[NAME_MAX];
 	char buff[10];
 	uint32 hnd;
 	int cnt;
@@ -171,7 +171,7 @@ static void builtin_hd(int argc, char *argv[]) {
 		return;
 	}
 
-	makeabspath(fn, argv[1], MAX_FN_LEN);
+	makeabspath(fn, argv[1], NAME_MAX);
 
 	hnd = fs_open(fn, O_RDONLY);
 	if (!hnd) {
@@ -203,8 +203,8 @@ static void builtin_hd(int argc, char *argv[]) {
 /* copy files */
 static void builtin_cp(int argc, char *argv[]) {
 	char buff[256];
-	char srcfn[MAX_FN_LEN];
-	char destfn[MAX_FN_LEN];
+	char srcfn[NAME_MAX];
+	char destfn[NAME_MAX];
 	uint32 src;
 	uint32 dest;
 	int cnt;
@@ -215,8 +215,8 @@ static void builtin_cp(int argc, char *argv[]) {
 	}
 
 	/* get abs paths */
-	makeabspath(srcfn, argv[1], MAX_FN_LEN);
-	makeabspath(destfn, argv[2], MAX_FN_LEN);
+	makeabspath(srcfn, argv[1], NAME_MAX);
+	makeabspath(destfn, argv[2], NAME_MAX);
 
 	src = fs_open(srcfn, O_RDONLY);
 	if (!src) { conio_printf("Error opening %s\n", srcfn); return; }
@@ -233,7 +233,7 @@ static void builtin_cp(int argc, char *argv[]) {
 
 /* unlink files */
 static void builtin_rm(int argc, char *argv[]) {
-	char fn[MAX_FN_LEN];
+	char fn[NAME_MAX];
 
 	if (argc != 2) {
 		conio_printf("usage: rm file\n");
@@ -241,7 +241,7 @@ static void builtin_rm(int argc, char *argv[]) {
 	}
 
 	/* get the abs path for the fn to rem */
-	makeabspath(fn, argv[1], MAX_FN_LEN);
+	makeabspath(fn, argv[1], NAME_MAX);
 
 	if (fs_unlink(fn) != 0)
 		conio_printf("Error unlinking %s.\n", fn);
@@ -249,7 +249,7 @@ static void builtin_rm(int argc, char *argv[]) {
 
 /* create a directory */
 static void builtin_mkdir(int argc, char *argv[]) {
-	char fn[MAX_FN_LEN];
+	char fn[NAME_MAX];
 	
 	if (argc != 2) {
 		conio_printf("usage: mkdir dirname\n");
@@ -257,7 +257,7 @@ static void builtin_mkdir(int argc, char *argv[]) {
 	}
 
 	/* get the abs path for the dir to create */
-	makeabspath(fn, argv[1], MAX_FN_LEN);
+	makeabspath(fn, argv[1], NAME_MAX);
 
 	if (fs_mkdir(fn) != 0)
 		conio_printf("Error making directory %s.\n", fn);
@@ -265,7 +265,7 @@ static void builtin_mkdir(int argc, char *argv[]) {
 
 /* delete a directory */
 static void builtin_rmdir(int argc, char *argv[]) {
-	char fn[MAX_FN_LEN];
+	char fn[NAME_MAX];
 	
 	if (argc != 2) {
 		conio_printf("usage: rmdir dirname\n");
@@ -273,7 +273,7 @@ static void builtin_rmdir(int argc, char *argv[]) {
 	}
 
 	/* get the abs path for the dir to delete */
-	makeabspath(fn, argv[1], MAX_FN_LEN);
+	makeabspath(fn, argv[1], NAME_MAX);
 
 	if (fs_rmdir(fn) != 0)
 		conio_printf("Error deleting directory %s.\n", fn);
@@ -363,7 +363,7 @@ static void builtin_die(int argc, char *argv[]) {
 #ifdef _arch_dreamcast
 /* Do a screen dump -- note, won't always work 100% due to threading stuff */
 static void builtin_sshot(int argc, char *argv[]) {
-	char fn[MAX_FN_LEN];
+	char fn[NAME_MAX];
 
 	if (argc != 2) {
 		conio_printf("usage: sshot outfile.ppm\n");
@@ -371,7 +371,7 @@ static void builtin_sshot(int argc, char *argv[]) {
 	}
 	
 	/* get the abs path for the dir to create */
-	makeabspath(fn, argv[1], MAX_FN_LEN);
+	makeabspath(fn, argv[1], NAME_MAX);
 
 	conio_printf("Doing a screen shot to %s\n", fn);
 	vid_screen_shot(fn);
