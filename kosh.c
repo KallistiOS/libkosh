@@ -19,7 +19,7 @@
 volatile int kosh_exit = KE_JOINED;
 
 /* Our exit semaphore - signaled when the thread exits */
-static pthread_t thd;
+static kthread_t *thd;
 
 static void * kosh_thread(void *p) {
 	conio_printf("  **** KOSH, The KallistiOS Shell ****\n");
@@ -34,7 +34,7 @@ static void * kosh_thread(void *p) {
 
 void kosh_join() {
 	assert( kosh_exit != KE_JOINED );
-	pthread_join(thd, NULL);
+	thd_join(thd, NULL);
 	kosh_exit = KE_JOINED;
 }
 
@@ -44,7 +44,7 @@ int kosh_init() {
 
 	kosh_exit = KE_NO;
 	kosh_builtins_init();
-	pthread_create(&thd, NULL, kosh_thread, NULL);
+	thd = thd_create(0, kosh_thread, NULL);
 	return 0;
 }
 
