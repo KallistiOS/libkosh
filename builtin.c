@@ -25,7 +25,6 @@ static SLIST_HEAD(builtin_list, builtin) builtins;
 
 /* print command list/desc */
 static void builtin_help(int argc, char *argv[]) {
-	int i;
 	builtin_t * b;
 
 	if (argc > 1) {
@@ -37,13 +36,13 @@ static void builtin_help(int argc, char *argv[]) {
 		}
 	} else {
 		conio_printf("KOSH commands:\n  ");
-	
+
 		SLIST_FOREACH(b, &builtins, list) {
 			conio_printf("%s ", b->command);
 		}
 
 		conio_printf("\nType 'help command' for a description.\n");
-	}	
+	}
 }
 
 /* exit the shell */
@@ -165,7 +164,7 @@ static void builtin_hd(int argc, char *argv[]) {
 	char buff[10];
 	uint32 hnd;
 	int cnt;
-	
+
 	if (argc != 2) {
 		conio_printf("usage: hd file\n");
 		return;
@@ -182,14 +181,14 @@ static void builtin_hd(int argc, char *argv[]) {
 	/* do the hexdump */
 	while ((cnt = fs_read(hnd, buff, 10)) != 0) {
 		int i;
-		
+
 		for (i = 0; i < cnt; i++)
 			conio_printf("%02x ", (unsigned char) buff[i]);
 		conio_deadvance_cursor();
 		//cursor.col = 10 * 3 + 2;
 		conio_putch('|');
 		for (i = 0; i < cnt; i++) {
-			if (isprint(buff[i]))
+			if (isprint((int)buff[i]))
 				conio_putch(buff[i]);
 			else
 				conio_putch('.');
@@ -250,7 +249,7 @@ static void builtin_rm(int argc, char *argv[]) {
 /* create a directory */
 static void builtin_mkdir(int argc, char *argv[]) {
 	char fn[NAME_MAX];
-	
+
 	if (argc != 2) {
 		conio_printf("usage: mkdir dirname\n");
 		return;
@@ -266,7 +265,7 @@ static void builtin_mkdir(int argc, char *argv[]) {
 /* delete a directory */
 static void builtin_rmdir(int argc, char *argv[]) {
 	char fn[NAME_MAX];
-	
+
 	if (argc != 2) {
 		conio_printf("usage: rmdir dirname\n");
 		return;
@@ -292,7 +291,7 @@ static void builtin_theme(int argc, char *argv[]) {
 		conio_set_theme(CONIO_THEME_C64);
 	else if (strcmp(argv[1], "plain") == 0)
 		conio_set_theme(CONIO_THEME_PLAIN);
-	else 
+	else
 		conio_printf("unknown theme\n");
 }
 
@@ -305,7 +304,7 @@ static void builtin_menu(int argc, char *argv[]) {
 /* Mount a romdisk image */
 static void builtin_mount_romdisk(int argc, char *argv[]) {
 	void * data;
-	
+
 	if (argc != 3) {
 		conio_printf("usage: mount_romdisk srcimg mountpoint\n");
 		return;
@@ -334,15 +333,13 @@ static void builtin_mount_romdisk(int argc, char *argv[]) {
 
 /* Print out a list of running threads */
 static void builtin_threads(int argc, char *argv[]) {
-	kthread_t * cur;
-
 	thd_pslist(conio_printf);
 }
 
 /* Print out memory usage statistics */
 static void builtin_mstats(int argc, char *argv[]) {
 	struct mallinfo mi = mallinfo();
-	
+
 	conio_printf("Memory usage:\n");
 	conio_printf("  Max system bytes = %10lu\n",
 		(unsigned long)(mi.usmblks));
@@ -369,7 +366,7 @@ static void builtin_sshot(int argc, char *argv[]) {
 		conio_printf("usage: sshot outfile.ppm\n");
 		return;
 	}
-	
+
 	/* get the abs path for the dir to create */
 	makeabspath(fn, argv[1], NAME_MAX);
 
@@ -382,7 +379,6 @@ static void builtin_sshot(int argc, char *argv[]) {
 
 /* try to run a builtin command, return 0 if there is no such builtin */
 int kosh_builtin_command(int argc, char *argv[]) {
-	int i;
 	builtin_t * b;
 
 	SLIST_FOREACH(b, &builtins, list) {
